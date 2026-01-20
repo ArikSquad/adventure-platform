@@ -1,0 +1,9 @@
+dependencies {
+  api project(":adventure-platform-api")
+  api "net.kyori:adventure-text-serializer-legacy:${rootProject.adventure}"
+  api("net.kyori:adventure-text-serializer-gson:${rootProject.adventure}") {
+    exclude group: "com.google.code.gson"
+  }
+  implementation project(":adventure-platform-facet")
+  compileOnly 'com.hypixel.hytale:HytaleServer:2026.01.17-4b0f30090-SNAPSHOT'
+}
