@@ -23,10 +23,10 @@
  */
 package net.kyori.adventure.platform.hytale;
 
-import com.hypixel.hytale.api.CommandSender;
-import com.hypixel.hytale.api.Player;
-import com.hypixel.hytale.api.Plugin;
-import com.hypixel.hytale.api.Server;
+import com.hypixel.hytale.server.core.command.CommandSender;
+import com.hypixel.hytale.server.core.universe.player.Player;
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
+import com.hypixel.hytale.server.core.HytaleServer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,30 +47,30 @@ import static java.util.Objects.requireNonNull;
 
 final class HytaleAudiencesImpl extends FacetAudienceProvider<CommandSender, HytaleAudience> implements HytaleAudiences {
   static {
-    Knob.OUT = message -> Server.getInstance().getLogger().log(Level.INFO, message);
-    Knob.ERR = (message, error) -> Server.getInstance().getLogger().log(Level.WARNING, message, error);
+    Knob.OUT = message -> HytaleServer.getInstance().getLogger().log(Level.INFO, message);
+    Knob.ERR = (message, error) -> HytaleServer.getInstance().getLogger().log(Level.WARNING, message, error);
   }
 
   private static final Map<String, HytaleAudiences> INSTANCES = Collections.synchronizedMap(new HashMap<>(4));
 
-  static @NotNull HytaleAudiences instanceFor(final @NotNull Plugin plugin) {
+  static @NotNull HytaleAudiences instanceFor(final @NotNull JavaPlugin plugin) {
     return builder(plugin).build();
   }
 
-  static @NotNull Builder builder(final @NotNull Plugin plugin) {
+  static @NotNull Builder builder(final @NotNull JavaPlugin plugin) {
     return new Builder(plugin);
   }
 
-  private final Plugin plugin;
+  private final JavaPlugin plugin;
 
-  HytaleAudiencesImpl(final Plugin plugin, final @NotNull ComponentRenderer<Pointered> componentRenderer) {
+  HytaleAudiencesImpl(final JavaPlugin plugin, final @NotNull ComponentRenderer<Pointered> componentRenderer) {
     super(componentRenderer);
     this.plugin = requireNonNull(plugin, "plugin");
 
-    final CommandSender console = this.plugin.getServer().getConsole();
+    final CommandSender console = HytaleServer.getInstance().getConsole();
     this.addViewer(console);
 
-    for (final Player player : this.plugin.getServer().getPlayers()) {
+    for (final Player player : HytaleServer.getInstance().getPlayers()) {
       this.addViewer(player);
     }
   }
@@ -80,7 +80,7 @@ final class HytaleAudiencesImpl extends FacetAudienceProvider<CommandSender, Hyt
   public Audience sender(final @NotNull CommandSender sender) {
     if (sender instanceof Player) {
       return this.player((Player) sender);
-    } else if (Server.getInstance().getConsole().equals(sender)) {
+    } else if (HytaleServer.getInstance().getConsole().equals(sender)) {
       return this.console();
     }
     return this.createAudience(Collections.singletonList(sender));
@@ -109,10 +109,10 @@ final class HytaleAudiencesImpl extends FacetAudienceProvider<CommandSender, Hyt
   }
 
   static final class Builder implements HytaleAudiences.Builder {
-    private final @NotNull Plugin plugin;
+    private final @NotNull JavaPlugin plugin;
     private ComponentRenderer<Pointered> componentRenderer;
 
-    Builder(final @NotNull Plugin plugin) {
+    Builder(final @NotNull JavaPlugin plugin) {
       this.plugin = requireNonNull(plugin, "plugin");
       this.componentRenderer(ptr -> ptr.getOrDefault(Identity.LOCALE, DEFAULT_LOCALE), GlobalTranslator.renderer());
     }

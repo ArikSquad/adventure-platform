@@ -23,8 +23,8 @@
  */
 package net.kyori.adventure.platform.hytale;
 
-import com.hypixel.hytale.api.CommandSender;
-import com.hypixel.hytale.api.Player;
+import com.hypixel.hytale.server.core.command.CommandSender;
+import com.hypixel.hytale.server.core.universe.player.Player;
 import java.util.Collection;
 import net.kyori.adventure.platform.facet.Facet;
 import net.kyori.adventure.platform.facet.FacetAudience;

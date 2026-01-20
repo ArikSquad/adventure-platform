@@ -23,9 +23,9 @@
  */
 package net.kyori.adventure.platform.hytale;
 
-import com.hypixel.hytale.api.CommandSender;
-import com.hypixel.hytale.api.Player;
-import com.hypixel.hytale.api.Plugin;
+import com.hypixel.hytale.server.core.command.CommandSender;
+import com.hypixel.hytale.server.core.universe.player.Player;
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import java.util.function.Predicate;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.AudienceProvider;
@@ -46,7 +46,7 @@ public interface HytaleAudiences extends AudienceProvider {
    * @return an audience provider
    * @since 4.0.0
    */
-  static @NotNull HytaleAudiences create(final @NotNull Plugin plugin) {
+  static @NotNull HytaleAudiences create(final @NotNull JavaPlugin plugin) {
     return HytaleAudiencesImpl.instanceFor(plugin);
   }
 
@@ -59,7 +59,7 @@ public interface HytaleAudiences extends AudienceProvider {
    * @return an audience provider
    * @since 4.0.0
    */
-  static @NotNull Builder builder(final @NotNull Plugin plugin) {
+  static @NotNull Builder builder(final @NotNull JavaPlugin plugin) {
     return HytaleAudiencesImpl.builder(plugin);
   }
 

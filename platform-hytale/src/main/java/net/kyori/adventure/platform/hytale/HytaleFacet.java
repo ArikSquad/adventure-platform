@@ -23,9 +23,9 @@
  */
 package net.kyori.adventure.platform.hytale;
 
-import com.hypixel.hytale.api.CommandSender;
-import com.hypixel.hytale.api.Player;
-import com.hypixel.hytale.api.Server;
+import com.hypixel.hytale.server.core.command.CommandSender;
+import com.hypixel.hytale.server.core.universe.player.Player;
+import com.hypixel.hytale.server.core.HytaleServer;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import static net.kyori.adventure.platform.facet.Knob.logUnsupported;
 
 class HytaleFacet<V extends CommandSender> extends FacetBase<V> {
-  static final ComponentFlattener FLATTENER = FacetComponentFlattener.get(Server.getInstance(), null);
+  static final ComponentFlattener FLATTENER = FacetComponentFlattener.get(HytaleServer.getInstance(), null);
   static final GsonComponentSerializer MODERN = GsonComponentSerializer.gson();
   static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder().flattener(FLATTENER).build();
 
@@ -271,7 +271,7 @@ class HytaleFacet<V extends CommandSender> extends FacetBase<V> {
       builder.withDynamic(Identity.NAME, viewer::getName);
       builder.withStatic(PermissionChecker.POINTER, perm -> viewer.hasPermission(perm) ? TriState.TRUE : TriState.FALSE);
       if (!(viewer instanceof Player)) {
-        builder.withStatic(FacetPointers.TYPE, viewer == Server.getInstance().getConsole() ? FacetPointers.Type.CONSOLE : FacetPointers.Type.OTHER);
+        builder.withStatic(FacetPointers.TYPE, viewer == HytaleServer.getInstance().getConsole() ? FacetPointers.Type.CONSOLE : FacetPointers.Type.OTHER);
       }
     }
   }
