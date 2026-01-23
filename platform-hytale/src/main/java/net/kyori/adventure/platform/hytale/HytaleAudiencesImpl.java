@@ -24,9 +24,11 @@
 package net.kyori.adventure.platform.hytale;
 
 import com.hypixel.hytale.component.Holder;
+import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.command.system.CommandSender;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
+import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
@@ -93,13 +95,6 @@ final class HytaleAudiencesImpl extends FacetAudienceProvider<CommandSender, Hyt
 
   private final JavaPlugin plugin;
 
-  private Player asPlayer(final Holder<EntityStore> holder) {
-    if (holder == null) {
-      throw new IllegalArgumentException("holder cannot be null");
-    }
-    return holder.getComponent(Player.getComponentType());
-  }
-
   HytaleAudiencesImpl(final JavaPlugin plugin, final @NotNull ComponentRenderer<Pointered> componentRenderer) {
     super(componentRenderer);
     this.plugin = requireNonNull(plugin, "plugin");
@@ -109,14 +104,25 @@ final class HytaleAudiencesImpl extends FacetAudienceProvider<CommandSender, Hyt
 
     Universe.get().getWorlds().forEach((string, world) -> {
       for (final PlayerRef playerRef : world.getPlayerRefs()) {
-        final Player player = this.asPlayer(playerRef.getHolder());
+        final Holder<EntityStore> holder = playerRef.getHolder();
+        if (holder == null) {
+          throw new IllegalArgumentException("holder cannot be null");
+        }
+        final Player player = holder.getComponent(Player.getComponentType());
+        if (player == null) {
+          throw new IllegalArgumentException("player cannot be null");
+        }
         this.addViewer(player);
       }
     });
 
-    plugin.getEventRegistry().registerGlobal(PlayerConnectEvent.class, event -> {
-      final Holder<EntityStore> holder = event.getPlayerRef().getHolder();
-      final Player player = this.asPlayer(holder);
+    plugin.getEventRegistry().registerGlobal(PlayerReadyEvent.class, event -> {
+      final Ref<EntityStore> playerRef = event.getPlayerRef();
+      final Store<EntityStore> store = playerRef.getStore();
+      final Player player = store.getComponent(playerRef, Player.getComponentType());
+      if (player == null) {
+        throw new IllegalArgumentException("player cannot be null");
+      }
       this.addViewer(player);
     });
   }
