@@ -150,9 +150,9 @@ class HytaleFacet<V extends CommandSender> extends FacetBase<V> {
       String subtitle = "";
       String icon = null;
       boolean isMajor = false;
-      float stay = 4;
-      float fadeIn = 1;
-      float fadeOut = 1;
+      float stay = 4.0f;
+      float fadeIn = 1.0f;
+      float fadeOut = 1.0f;
     }
   }
 
